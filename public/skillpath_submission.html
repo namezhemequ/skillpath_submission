@@ -298,12 +298,13 @@ body {
   overflow: hidden;
   border: 1px solid var(--rule);
   background: var(--bg2);
-  min-height: 360px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--muted); font-size: 0.9rem;
-  flex-direction: column; gap: 0.6rem;
 }
-.intro-screenshot-icon { font-size: 3rem; opacity: 0.3; }
+.intro-screenshot img { width: 100%; height: auto; display: block; }
+.product-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+.product-showcase-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--rule); background: var(--bg2); transition: var(--transition); }
+.product-showcase-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.product-showcase-card img { width: 100%; height: auto; display: block; }
+.product-showcase-label { padding: 0.8rem 1rem; font-size: 0.85rem; font-weight: 600; text-align: center; border-top: 1px solid var(--rule); color: var(--muted); }
 
 /* ===== MODULE: Core Features ===== */
 .features-section { background: var(--bg2); }
@@ -450,30 +451,6 @@ body {
 }
 .step-tag.session { border-color: rgba(99,102,241,0.3); color: var(--primary-light); }
 
-/* Screenshot gallery */
-.screenshot-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-  margin-top: 3rem;
-}
-.screenshot-card {
-  background: var(--bg2); border: 1px solid var(--rule);
-  border-radius: var(--radius-lg); overflow: hidden;
-  transition: var(--transition);
-}
-.screenshot-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-.screenshot-placeholder {
-  aspect-ratio: 16/10;
-  background: var(--bg3);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--muted); font-size: 0.85rem;
-  flex-direction: column; gap: 0.5rem;
-}
-.screenshot-placeholder-icon { font-size: 2.5rem; opacity: 0.25; }
-.screenshot-label {
-  padding: 1rem 1.2rem;
-  font-size: 0.85rem; font-weight: 600;
-  border-top: 1px solid var(--rule);
-}
 
 /* Session ID table */
 .session-table-wrap {
@@ -555,7 +532,6 @@ body {
   .hero-stats { gap: 2rem; }
   .intro-grid, .thinking-grid { grid-template-columns: 1fr; gap: 2rem; }
   .features-grid, .scenario-grid { grid-template-columns: repeat(2, 1fr); }
-  .screenshot-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
   .nav-links { display: none; }
@@ -564,7 +540,8 @@ body {
   .hero h1 { font-size: 2rem; }
   .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
   .section { padding: 4rem 1.5rem; }
-  .features-grid, .scenario-grid, .screenshot-grid { grid-template-columns: 1fr; }
+  .features-grid, .scenario-grid { grid-template-columns: 1fr; }
+  .product-showcase { grid-template-columns: 1fr; }
   .practice-step { flex-direction: column; gap: 1rem; }
   .practice-steps-line { display: none; }
   .footer-inner { flex-direction: column; text-align: center; }
@@ -698,9 +675,7 @@ body {
         </div>
       </div>
       <div class="intro-screenshot fade-in">
-        <div class="intro-screenshot-icon">&#127795;</div>
-        <span>产品主界面预览</span>
-        <span style="font-size:0.75rem;opacity:0.5">技能树 + 今日任务双栏布局</span>
+        <img src="screenshots/homepage.png" alt="学径 SkillPath 主界面" loading="lazy" />
       </div>
     </div>
   </div>
@@ -749,9 +724,32 @@ body {
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- ===== 用户场景 ===== -->
+  <!-- ===== 产品预览 ===== -->
+  <section class="section-full" style="background:var(--bg);">
+    <div class="section">
+      <div class="section-header center fade-in">
+        <div class="section-label indigo">&#9679; 产品预览</div>
+        <h2 class="section-title">关键页面一览</h2>
+        <p class="section-desc">
+          从输入目标到查看技能树，学径的核心体验流程。
+        </p>
+      </div>
+      <div class="product-showcase">
+        <div class="product-showcase-card fade-in">
+          <img src="screenshots/homepage.png" alt="学径首页" loading="lazy" />
+          <div class="product-showcase-label">首页 · 输入模糊目标，一键拆解为技能树</div>
+        </div>
+        <div class="product-showcase-card fade-in">
+          <img src="screenshots/plan-detail.png" alt="学径计划详情页" loading="lazy" />
+          <div class="product-showcase-label">计划详情 · 技能树可视化 + 每日最小行动清单</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 用户场景 ===== -->
 <section class="scenario-section section-full" id="scenarios">
   <div class="section">
     <div class="section-header center fade-in">
