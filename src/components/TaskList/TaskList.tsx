@@ -21,9 +21,9 @@ export function TaskList({ tasks, onToggle }: Props) {
         <label
           key={task.id}
           className={`
-            flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all
-            ${task.completed ? 'bg-emerald-500/5' : 'hover:bg-slate-800'}
-            group
+            flex items-center gap-3 p-3 sm:py-3.5 rounded-xl cursor-pointer transition-all
+            ${task.completed ? 'bg-emerald-500/5' : 'hover:bg-slate-800 active:bg-slate-800'}
+            group min-h-[44px]
           `}
         >
           <div className="relative flex-shrink-0">

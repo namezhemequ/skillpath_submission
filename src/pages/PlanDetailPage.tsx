@@ -85,10 +85,10 @@ export function PlanDetailPage() {
             <h1 className="text-base font-semibold text-slate-100 truncate">{plan.goal}</h1>
           </div>
 
-          <div className="hidden sm:flex items-center gap-4 text-xs text-slate-500">
-            <span>今日 {todayDone}/{todayTasks.length}</span>
-            <span>连续 {plan.streakDays} 天</span>
-            <span>完成 {plan.completionRate}%</span>
+          <div className="flex items-center gap-3 text-xs text-slate-500 overflow-x-auto">
+            <span className="whitespace-nowrap">今日 {todayDone}/{todayTasks.length}</span>
+            <span className="whitespace-nowrap">连续 {plan.streakDays} 天</span>
+            <span className="whitespace-nowrap">完成 {plan.completionRate}%</span>
           </div>
         </div>
       </header>
@@ -112,7 +112,7 @@ export function PlanDetailPage() {
               <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">技能树</h2>
               <span className="text-xs text-slate-600">点击节点查看详情</span>
             </div>
-            <div className="h-[480px] sm:h-[560px]">
+            <div className="h-[360px] sm:h-[480px] lg:h-[560px]">
               <SkillTree nodes={plan.skillTree} onNodeClick={handleNodeClick} />
             </div>
           </div>

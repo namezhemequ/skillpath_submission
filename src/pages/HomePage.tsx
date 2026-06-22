@@ -32,7 +32,7 @@ export function HomePage() {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-emerald-500/3 blur-[120px]" />
 
       {/* ====== HERO ====== */}
-      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-24 px-4">
+      <section className="relative pt-24 sm:pt-40 pb-12 sm:pb-24 px-4">
         <div className="max-w-3xl mx-auto text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 text-xs font-semibold mb-8">
@@ -44,7 +44,7 @@ export function HomePage() {
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.08] mb-5 sm:mb-6">
             把模糊目标
             <br />
             <span className="bg-gradient-to-r from-indigo-300 via-indigo-100 to-purple-300 bg-clip-text text-transparent">
@@ -52,7 +52,7 @@ export function HomePage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-slate-400 max-w-xl mx-auto mb-2 leading-relaxed">
+          <p className="text-base sm:text-xl text-slate-400 max-w-xl mx-auto mb-2 leading-relaxed">
             输入任何一个想学的技能，AI 帮你解剖成可视化技能树 + 每日最小行动清单
           </p>
           <p className="text-sm text-slate-600 mb-12">
@@ -79,19 +79,19 @@ export function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="flex justify-center gap-16 sm:gap-20 text-center">
+          <div className="flex justify-center gap-8 sm:gap-20 text-center">
             <div>
-              <div className="text-3xl sm:text-4xl font-bold text-indigo-400">3</div>
+              <div className="text-2xl sm:text-4xl font-bold text-indigo-400">3</div>
               <div className="text-xs text-slate-500 mt-1">步从目标到行动清单</div>
             </div>
             <div className="w-px bg-slate-800 self-stretch" />
             <div>
-              <div className="text-3xl sm:text-4xl font-bold text-indigo-400">3层+</div>
+              <div className="text-2xl sm:text-4xl font-bold text-indigo-400">3层+</div>
               <div className="text-xs text-slate-500 mt-1">技能树分解深度</div>
             </div>
             <div className="w-px bg-slate-800 self-stretch" />
             <div>
-              <div className="text-3xl sm:text-4xl font-bold text-indigo-400">0</div>
+              <div className="text-2xl sm:text-4xl font-bold text-indigo-400">0</div>
               <div className="text-xs text-slate-500 mt-1">门槛，每天3件小事</div>
             </div>
           </div>

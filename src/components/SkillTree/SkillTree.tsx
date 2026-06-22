@@ -101,7 +101,7 @@ export function SkillTree({ nodes, onNodeClick }: SkillTreeProps) {
   }, [nodes]);
 
   return (
-    <div className="h-[480px] sm:h-[560px] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+    <div className="h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
       <ReactFlow
         nodes={flowNodes}
         edges={flowEdges}

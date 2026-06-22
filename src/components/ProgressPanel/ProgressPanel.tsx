@@ -11,10 +11,10 @@ function StatCard({ label, value, sub, variant }: {
   }[variant];
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-      <div className="text-xs text-slate-500 mb-1">{label}</div>
-      <div className={`text-2xl font-bold ${colors.value}`}>{value}</div>
-      <div className="text-xs text-slate-600 mt-0.5">{sub}</div>
+    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center text-center">
+      <div className="text-[10px] sm:text-xs text-slate-500 mb-1">{label}</div>
+      <div className={`text-lg sm:text-2xl font-bold ${colors.value}`}>{value}</div>
+      <div className="text-[10px] sm:text-xs text-slate-600 mt-0.5">{sub}</div>
     </div>
   );
 }
@@ -30,7 +30,7 @@ interface Props {
 
 export function ProgressPanel({ completionRate, streakDays, totalTasks, completedTasks, todayDone, todayTotal }: Props) {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-3 gap-2 sm:gap-3">
       <StatCard
         label="今日进度"
         value={todayTotal > 0 ? `${todayDone}/${todayTotal}` : '--'}

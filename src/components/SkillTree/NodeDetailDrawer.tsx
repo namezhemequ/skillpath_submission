@@ -84,7 +84,7 @@ export function NodeDetailDrawer({ node, allNodes, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div
-        className="relative w-[420px] max-w-full bg-slate-900 border-l border-slate-800 h-full overflow-y-auto animate-slide-in-right"
+        className="relative w-full sm:w-[420px] max-w-full bg-slate-900 border-l border-slate-800 h-full overflow-y-auto animate-slide-in-right"
         role="dialog"
         aria-modal="true"
       >
