@@ -6,6 +6,52 @@ function todayStr(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+function sanitizePlanData(skillTree: SkillNode[], tasks: DailyTask[]): { skillTree: SkillNode[]; tasks: DailyTask[] } {
+  const nodeIds = new Set(skillTree.map((n) => n.id));
+  const safeId = () => Math.random().toString(36).substring(2, 9);
+
+  // Fix nodes: ensure unique IDs, remove self-refs and dangling deps
+  const seenIds = new Set<string>();
+  const cleanNodes = skillTree.map((n) => {
+    let id = n.id;
+    if (!id || seenIds.has(id)) id = safeId();
+    seenIds.add(id);
+
+    return {
+      ...n,
+      id,
+      dependencies: (n.dependencies || []).filter((d: string) => d !== id && nodeIds.has(d)),
+      estimatedHours: Math.max(1, Math.min(100, Number(n.estimatedHours) || 8)),
+      difficulty: (n.difficulty >= 1 && n.difficulty <= 3 ? n.difficulty : 1) as 1 | 2 | 3,
+      resources: (n.resources || []).slice(0, 5),
+      progress: 0,
+    };
+  });
+
+  const cleanIds = new Set(cleanNodes.map((n) => n.id));
+
+  // Fix tasks: ensure valid nodeId refs, fix dates
+  const seenTaskIds = new Set<string>();
+  const today = todayStr();
+  const cleanTasks = tasks.map((t, idx) => {
+    let tid = t.id;
+    if (!tid || seenTaskIds.has(tid)) tid = `${safeId()}-${idx}`;
+    seenTaskIds.add(tid);
+
+    return {
+      ...t,
+      id: tid,
+      planId: '',
+      nodeId: cleanIds.has(t.nodeId) ? t.nodeId : (cleanNodes[0]?.id || 'n1'),
+      date: t.date && /^\d{4}-\d{2}-\d{2}$/.test(t.date) && t.date >= today ? t.date : today,
+      completed: false,
+      order: Math.max(1, Number(t.order) || idx + 1),
+    };
+  });
+
+  return { skillTree: cleanNodes, tasks: cleanTasks };
+}
+
 function shiftOverdue(tasks: DailyTask[], today: string): DailyTask[] {
   return tasks.map((t) => (!t.completed && t.date < today ? { ...t, date: today } : t));
 }
@@ -56,8 +102,9 @@ function calcStreak(tasks: DailyTask[]): number {
   let streak = 0;
   const d = new Date();
   d.setDate(d.getDate() - 1);
+  const MAX_BACKTRACK = 90;
 
-  while (true) {
+  for (let i = 0; i < MAX_BACKTRACK; i++) {
     const s = d.toISOString().split('T')[0];
     const done = dateMap.get(s);
     if (done === true) {
@@ -65,7 +112,6 @@ function calcStreak(tasks: DailyTask[]): number {
       d.setDate(d.getDate() - 1);
     } else if (done === undefined) {
       d.setDate(d.getDate() - 1);
-      if (streak > 60) break;
     } else {
       break;
     }
@@ -106,10 +152,11 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ plans: valid });
   },
 
-  createPlan: (goal, skillTree, tasks) => {
+  createPlan: (goal, rawSkillTree, rawTasks) => {
     const id = `plan-${Date.now()}`;
     const today = todayStr();
-    const shifted = shiftOverdue(tasks, today);
+    const { skillTree, tasks: cleanTasks } = sanitizePlanData(rawSkillTree, rawTasks);
+    const shifted = shiftOverdue(cleanTasks, today);
     const plan: LearningPlan = {
       id,
       goal,
@@ -138,37 +185,40 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   toggleTaskComplete: (planId, taskId) => {
-    const plan = get().plans.find((p) => p.id === planId);
-    if (!plan) return;
+    try {
+      const plan = get().plans.find((p) => p.id === planId);
+      if (!plan) return;
 
-    const tasks = plan.tasks.map((t) =>
-      t.id === taskId ? { ...t, completed: !t.completed } : t
-    );
+      const tasks = plan.tasks.map((t) =>
+        t.id === taskId ? { ...t, completed: !t.completed } : t
+      );
 
-    let tree = plan.skillTree.map((n) => {
-      const progress = calcNodeProgress(n.id, tasks);
-      return updateNodeStatus(n, progress, plan.skillTree);
-    });
+      let tree = plan.skillTree.map((n) => {
+        const progress = calcNodeProgress(n.id, tasks);
+        return updateNodeStatus(n, progress, plan.skillTree);
+      });
 
-    // Auto-unlock nodes when all dependencies are completed
-    tree = tree.map((n) => {
-      if (n.status === 'locked') {
-        const allDepsDone = n.dependencies.every((depId) => {
-          const dep = tree.find((node) => node.id === depId);
-          return dep && dep.status === 'completed';
-        });
-        if (allDepsDone) {
-          return { ...n, status: 'unlocked' as NodeStatus };
+      tree = tree.map((n) => {
+        if (n.status === 'locked') {
+          const allDepsDone = n.dependencies.every((depId) => {
+            const dep = tree.find((node) => node.id === depId);
+            return dep && dep.status === 'completed';
+          });
+          if (allDepsDone) {
+            return { ...n, status: 'unlocked' as NodeStatus };
+          }
         }
-      }
-      return n;
-    });
+        return n;
+      });
 
-    const completedCount = tasks.filter((t) => t.completed).length;
-    const rate = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
-    const streak = calcStreak(tasks);
+      const completedCount = tasks.filter((t) => t.completed).length;
+      const rate = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+      const streak = calcStreak(tasks);
 
-    get().updatePlan({ ...plan, tasks, skillTree: tree, completionRate: rate, streakDays: streak });
+      get().updatePlan({ ...plan, tasks, skillTree: tree, completionRate: rate, streakDays: streak });
+    } catch (e) {
+      console.error('toggleTaskComplete failed:', e);
+    }
   },
 
   setCurrentPlan: (id) => set({ currentPlanId: id }),

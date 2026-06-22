@@ -8,20 +8,30 @@ const nodeTypes = { skillNode: SkillNodeComponent };
 
 function computeBFSLayout(nodes: SkillNode[]): Map<string, { x: number; y: number }> {
   const depths = new Map<string, number>();
+  const ids = new Set(nodes.map((n) => n.id));
 
-  nodes.forEach((n) => { if (n.dependencies.length === 0) depths.set(n.id, 0); });
+  nodes.forEach((n) => {
+    if (n.dependencies.length === 0) depths.set(n.id, 0);
+  });
 
+  // Safety: cap iterations to prevent infinite loop from circular dependencies
+  const MAX_ITERS = nodes.length * 2;
   let changed = true;
-  while (changed) {
+  let iter = 0;
+  while (changed && iter < MAX_ITERS) {
     changed = false;
+    iter++;
     for (const n of nodes) {
       if (depths.has(n.id)) continue;
-      if (n.dependencies.every((d) => depths.has(d))) {
-        depths.set(n.id, Math.max(...n.dependencies.map((d) => depths.get(d)!)) + 1);
+      // Only consider dependencies that actually exist in the node set
+      const validDeps = n.dependencies.filter((d) => ids.has(d));
+      if (validDeps.length > 0 && validDeps.every((d) => depths.has(d))) {
+        depths.set(n.id, Math.max(...validDeps.map((d) => depths.get(d)!)) + 1);
         changed = true;
       }
     }
   }
+  // Any node still unresolved → place at depth 0 (broken dependency, but doesn't crash)
   nodes.forEach((n) => { if (!depths.has(n.id)) depths.set(n.id, 0); });
 
   const groups = new Map<number, SkillNode[]>();
