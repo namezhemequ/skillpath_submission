@@ -70,6 +70,16 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes confetti-fall {
+  0% { top: -10%; opacity: 1; transform: translateX(0) rotate(0deg); }
+  100% { top: 110%; opacity: 0; transform: translateX(40px) rotate(720deg); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
 .animate-glow-pulse {
   animation: glow-pulse 2.5s ease-in-out infinite;
 }
@@ -84,4 +94,12 @@ body {
 
 .animate-fade-in-up {
   animation: fade-in-up 0.4s ease-out;
+}
+
+.animate-confetti-fall {
+  animation: confetti-fall linear forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s ease-out;
 }

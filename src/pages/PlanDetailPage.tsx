@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SkillTree } from '../components/SkillTree';
 import { TaskList } from '../components/TaskList';
 import { ProgressPanel } from '../components/ProgressPanel';
 import { NodeDetailDrawer } from '../components/SkillTree/NodeDetailDrawer';
 import { useStore } from '../store/useStore';
+import { CelebrationOverlay, DailyDoneToast } from '../components/Celebration';
 import type { SkillNode } from '../types';
 
 export function PlanDetailPage() {
@@ -12,6 +13,10 @@ export function PlanDetailPage() {
   const navigate = useNavigate();
   const { plans, loadFromStorage, getTodayTasks, toggleTaskComplete } = useStore();
   const [selectedNode, setSelectedNode] = useState<SkillNode | null>(null);
+  const [showDailyDone, setShowDailyDone] = useState(false);
+  const [showPlanComplete, setShowPlanComplete] = useState(false);
+  const prevTodayDoneRef = useRef<{ done: number; total: number } | null>(null);
+  const prevRateRef = useRef(-1);
 
   useEffect(() => {
     loadFromStorage();
@@ -41,6 +46,25 @@ export function PlanDetailPage() {
   const todayTasks = getTodayTasks(plan.id);
   const totalCompleted = plan.tasks?.filter((t) => t.completed).length ?? 0;
   const todayDone = todayTasks?.filter((t) => t.completed).length ?? 0;
+
+  // Daily done toast: trigger when all today's tasks become completed
+  useEffect(() => {
+    const prev = prevTodayDoneRef.current;
+    const allDoneNow = todayDone === todayTasks.length && todayTasks.length > 0;
+    const wasNotAllDone = !prev || prev.done !== prev.total;
+    if (allDoneNow && wasNotAllDone) {
+      setShowDailyDone(true);
+    }
+    prevTodayDoneRef.current = { done: todayDone, total: todayTasks.length };
+  }, [todayDone, todayTasks.length]);
+
+  // Plan complete celebration: trigger when completion rate hits 100
+  useEffect(() => {
+    if (plan.completionRate === 100 && prevRateRef.current !== 100) {
+      setShowPlanComplete(true);
+    }
+    prevRateRef.current = plan.completionRate;
+  }, [plan.completionRate]);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -111,6 +135,10 @@ export function PlanDetailPage() {
           onClose={() => setSelectedNode(null)}
         />
       )}
+
+      {/* CELEBRATIONS */}
+      {showDailyDone && <DailyDoneToast onDismiss={() => setShowDailyDone(false)} />}
+      {showPlanComplete && <CelebrationOverlay onDismiss={() => setShowPlanComplete(false)} />}
     </div>
   );
 }
